@@ -24,7 +24,7 @@ SOFTWARE.
 
 import java.util.Scanner;
 
-class CalculoIMC {
+public class CalculoIMC {
 	public static String classificarIMC(double imc) {
 		if (imc < 16.0) {
 			return "Magreza grave";

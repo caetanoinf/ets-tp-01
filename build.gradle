@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
+    jacocoAgent 'org.jacoco:org.jacoco.agent:latest.release'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+configurations {
+    jacocoAgent
+}
