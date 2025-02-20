@@ -1,7 +1,10 @@
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.Positive;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
 
 public class CalculoIMCTest {
@@ -53,5 +56,43 @@ public class CalculoIMCTest {
             assertThatThrownBy(() -> CalculoIMC.calcularPeso(0, 1.80)).isInstanceOf(IllegalArgumentException.class);
             assertThatThrownBy(() -> CalculoIMC.calcularPeso(0, 0.0)).isInstanceOf(IllegalArgumentException.class);
         }
+    }
+
+    @Property
+    void testa_calculo_IMC_sempre_positivo(@ForAll @Positive double peso, @ForAll @Positive double altura) {
+        assertThat(CalculoIMC.calcularPeso(peso, altura)).isGreaterThanOrEqualTo(0);
+    }
+
+    @Property
+    void teste_calculo_IMC_valores_aleatorios(@ForAll double peso, @ForAll double altura) {
+        assertThat(CalculoIMC.calcularPeso(peso, altura)).isGreaterThanOrEqualTo(0);
+    }
+
+    @Property
+    void test_calculo_IMC_valores_especificos(@ForAll("pesosExtremos") double peso, @ForAll("alturasExtremas") double altura) {
+        assertThat(CalculoIMC.calcularPeso(peso, altura)).isGreaterThanOrEqualTo(0);
+    }
+
+    @Provide
+    Arbitrary<Double> alturasExtremas() {
+        return Arbitraries.of(0.5, 3.0, 5.0, 0.0, 1000.0);
+    }
+
+    @Provide
+    Arbitrary<Double> pesosExtremos() {
+        return Arbitraries.of(1.0, 500.0, 0.0, -1000.0, 1000000.0);
+    }
+
+    @Test
+    void testa_calculo_IMC_com_mockito() {
+        var scopedMock = mockStatic(CalculoIMC.class);
+        when(CalculoIMC.calcularPeso(anyDouble(), anyDouble())).thenReturn(34.0);
+        assertThat(CalculoIMC.calcularPeso(50, 1.70)).isEqualTo(34.0);
+        scopedMock.close();
+    }
+
+    @Example
+    void testa_calculo_IMC_com_example() {
+        assertThat(CalculoIMC.calcularPeso(50, 1.70)).isEqualTo(17.301038062283737);
     }
 }
